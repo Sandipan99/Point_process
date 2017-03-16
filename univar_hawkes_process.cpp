@@ -55,16 +55,10 @@ int main(int argc, char* argv[]){
 	}
 
 	std::ofstream out;
-	/*out.open("event_sequence_hawkes_univ");
+	out.open("event_sequence_hawkes_univ");
 	for(it=tau.begin();it!=tau.end();it++){
 		out<<*it<<std::endl;
 	}
 	out.close();
-	
-	for(it=lambda_t.begin();it!=lambda_t.end();it++)
-		std::cout<<*it<<std::endl;*/
-	out.open("lambda_t");
-	for(i=0;i<(int)(lambda_t.size());i++)
-		out << tau[i] << " "<<lambda_t[i] << std::endl;
-	out.close();	
+		
 }
