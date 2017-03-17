@@ -41,10 +41,7 @@ int main(int argc, char* argv[]){
 			lambda_s+= alpha*exp((-1)*beta*(s-*it));
 
 		if(D*lambda_b<=lambda_s){
-			n+=1;
-			if(n==51)
-				break;
-			
+			n+=1;			
 			if(s<T){
 				lambda_t.push_back(lambda_s);
 				tau.push_back(s);

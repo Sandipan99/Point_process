@@ -10,15 +10,25 @@
 #include<time.h>
 #include<map>
 
-float calculate_lambda(arma::mat mu,arma::mat alpha,arma::mat beta,std::map<std::vector<float>> tau, float s, int dim){
+
+int present(std::map<int,std::vector<float> > m, int e){
+	std::map<int,std::vector<float> >::iterator it = m.find(e);
+	if(it!=m.end())
+		return 1;
+	else	return 0;
+}
+
+float calculate_lambda(arma::mat mu,arma::mat alpha,arma::mat beta,std::map<int,std::vector<float> > tau, float s, int dim){
 	int i,j;
 	std::vector<float>::iterator it;
 	float lambda = 0.0;
 	for(i=0;i<dim;i++){
 		lambda += mu(i);
 		for(j=0;j<dim;j++){
-			for(it=tau[j].begin();it!=tau[j].end();it++)
-				lambda+=alpha(i,j)*exp((-1)*beta(i,j)*(s-*it));
+			if(present(tau,j)){
+				for(it=tau[j].begin();it!=tau[j].end();it++)
+					lambda+=alpha(i,j)*exp((-1)*beta(i,j)*(s-*it));
+			}
 		}
 	}	
 	return lambda;
@@ -36,7 +46,7 @@ int main(int argc, char* argv[]){
 	arma::vec n(dim,1);
 	int i=0,k;
 	float s=0.0,w,D,u;
-	std::map<std::vector<float>> tau;
+	std::map<int,std::vector<float> > tau;
 	std::vector<float>::iterator it;
 
 	std::srand(time(0));
@@ -51,17 +61,24 @@ int main(int argc, char* argv[]){
 
 		lambda_s = calculate_lambda(mu,alpha,beta,tau,s,dim);
 		
-	
+		std::cout<<"lambda_s:"<<lambda_s << std::endl;	
+
 		if(D*lambda_b<=lambda_s){
-			k=0;
+			std::cout<<"D*lambda_b: "<<D*lambda_b<<std::endl;
+			k=1;
 			lambda_m = calculate_lambda(mu,alpha,beta,tau,s,k);
+			
 			while(D*lambda_b>lambda_m){
 				k++;
+				std::cout<<"lambda_m: "<<lambda_m << std::endl;
 				lambda_m = calculate_lambda(mu,alpha,beta,tau,s,k);
 			}
-			n(k)++;
-			tau[k].push_back(s);
+			
+			n(k-1)++;
+			tau[k-1].push_back(s);
 		}
+		std::cout << "s: " << s << std::endl;
+		std::cout << "---------------" << std::endl;
 	}
 	std::ofstream out;
 	out.open("event_sequence_hawkes_mulv");
