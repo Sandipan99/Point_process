@@ -9,6 +9,7 @@
 #include<fstream>
 #include<time.h>
 #include<map>
+#include<string>
 
 
 int present(std::map<int,std::vector<float> > m, int e){
@@ -35,7 +36,7 @@ float calculate_lambda(arma::mat mu,arma::mat alpha,arma::mat beta,std::map<int,
 }
 
 
-void MultiVariateHawkes(arma::mat mu,arma::mat alpha,arma::mat beta, int T, int dim){
+void MultiVariateHawkes(arma::mat mu,arma::mat alpha,arma::mat beta, int T, int dim, int iterate){
 	float lambda_b,lambda_s,lambda_m;
 	arma::vec n(dim,1);
 	int i=0,k;
@@ -69,7 +70,7 @@ void MultiVariateHawkes(arma::mat mu,arma::mat alpha,arma::mat beta, int T, int 
 		}
 	}
 	std::ofstream out;
-	out.open("event_sequence_hawkes_mulv");
+	out.open("event_sequence_hawkes_mulv_"+std::to_string(iterate));
 	for(i=0;i<dim;i++){
 		for(it=tau[i].begin();it!=tau[i].end();it++)
 			out << i << " " << *it <<std::endl;
@@ -88,7 +89,7 @@ int main(int argc, char* argv[]){
 	arma::mat beta = {{1.2,1.0},{0.8,0.6}};
 	
 	while(iterate>0){
-		MultiVariateHawkes(mu, alpha, beta, T, dim);
+		MultiVariateHawkes(mu, alpha, beta, T, dim, iterate);
 		iterate--;
 	}
 }
