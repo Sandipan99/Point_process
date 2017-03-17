@@ -35,13 +35,7 @@ float calculate_lambda(arma::mat mu,arma::mat alpha,arma::mat beta,std::map<int,
 }
 
 
-int main(int argc, char* argv[]){
-
-	int dim = 2;
-	int T = 20;
-	arma::vec mu = {0.1,0.5};
-	arma::mat alpha = {{0.1,0.7},{0.5,0.2}};
-	arma::mat beta = {{1.2,1.0},{0.8,0.6}};
+void MultiVariateHawkes(arma::mat mu,arma::mat alpha,arma::mat beta, int T, int dim){
 	float lambda_b,lambda_s,lambda_m;
 	arma::vec n(dim,1);
 	int i=0,k;
@@ -59,26 +53,20 @@ int main(int argc, char* argv[]){
 		s = s+w;
 		D =  (float)(rand())/RAND_MAX;
 
-		lambda_s = calculate_lambda(mu,alpha,beta,tau,s,dim);
-		
-		std::cout<<"lambda_s:"<<lambda_s << std::endl;	
+		lambda_s = calculate_lambda(mu,alpha,beta,tau,s,dim);	
 
 		if(D*lambda_b<=lambda_s){
-			std::cout<<"D*lambda_b: "<<D*lambda_b<<std::endl;
 			k=1;
 			lambda_m = calculate_lambda(mu,alpha,beta,tau,s,k);
 			
 			while(D*lambda_b>lambda_m){
 				k++;
-				std::cout<<"lambda_m: "<<lambda_m << std::endl;
 				lambda_m = calculate_lambda(mu,alpha,beta,tau,s,k);
 			}
 			
 			n(k-1)++;
 			tau[k-1].push_back(s);
 		}
-		std::cout << "s: " << s << std::endl;
-		std::cout << "---------------" << std::endl;
 	}
 	std::ofstream out;
 	out.open("event_sequence_hawkes_mulv");
@@ -87,4 +75,20 @@ int main(int argc, char* argv[]){
 			out << i << " " << *it <<std::endl;
 	}
 	out.close();
+}
+
+
+
+int main(int argc, char* argv[]){
+
+	int dim = 2;
+	int T = 20,iterate = 1;
+	arma::vec mu = {0.1,0.5};
+	arma::mat alpha = {{0.1,0.7},{0.5,0.2}};
+	arma::mat beta = {{1.2,1.0},{0.8,0.6}};
+	
+	while(iterate>0){
+		MultiVariateHawkes(mu, alpha, beta, T, dim);
+		iterate--;
+	}
 }
