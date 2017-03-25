@@ -1,3 +1,5 @@
 This project contains implementation of point processes (i) Poisson process, (ii) Univariate Hawkes process and (iii) Multivariate Hawkes process
 
-Multivariate hawkes process uses Armadillo library (http://arma.sourceforge.net/) and hence its installation is necessary. While (i) and (ii) are ready for use (iii) is under development.
+Multivariate hawkes process uses Armadillo library (http://arma.sourceforge.net/) and hence its installation is necessary. 
+
+

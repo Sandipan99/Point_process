@@ -30,8 +30,8 @@ int main(int argc, char* argv[]){
 			n++;
 			e.push_back(i_a_t);
 			//events[i]+=1;
-			if(n>50)
-				break;
+			//if(n>50)
+			//	break;
 		}
 		i++;
 	}
