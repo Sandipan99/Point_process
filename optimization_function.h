@@ -3,6 +3,7 @@
 #define __OPTIMIZATION_FUNCTION_H_INCLUDED__
 
 #include<vector>
+#include<map>
 #include<dlib/optimization.h>
 
 using namespace dlib;
@@ -30,6 +31,16 @@ class Univar_Hawkes{
 		Univar_Hawkes(std::vector<double>);
 		double operator()(const column_vector) const;
 		 
+};
+
+class Multivar_Hawkes{
+	private:
+		std::map<int,double> arrival;
+		double t_n;
+		int n;
+	public:
+		Multivar_Hawkes(std::map<int,double>);
+		double operator()(const column_vector) const; //parametrs to be placed in a single vector with proper ordering maintained 	
 };
 
 #endif

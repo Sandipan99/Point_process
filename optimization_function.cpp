@@ -40,3 +40,7 @@ double Univar_Hawkes::operator()(const column_vector x)const{
 		s_2 += log(x(0) + x(1)*R[i]);
 	return(x(0)*t_n - s_1 - s_2);
 }
+
+Multivar_Hawkes::Multivar_Hawkes(std::map<int,double>){
+	
+}
