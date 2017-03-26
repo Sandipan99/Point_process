@@ -21,7 +21,15 @@ class Poisson_process{
 
 
 class Univar_Hawkes{
+	private:
+		std::vector<double> arrival;
+		double t_n;
+		int n;
 
+	public:
+		Univar_Hawkes(std::vector<double>);
+		double operator()(const column_vector) const;
+		 
 };
 
 #endif
