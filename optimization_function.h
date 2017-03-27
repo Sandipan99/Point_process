@@ -3,6 +3,7 @@
 #define __OPTIMIZATION_FUNCTION_H_INCLUDED__
 
 #include<vector>
+#include<tuple>
 #include<map>
 #include<dlib/optimization.h>
 
@@ -38,9 +39,11 @@ class Multivar_Hawkes{
 		std::map<int,double> arrival;
 		double t_n;
 		int n;
+		int dim;
 	public:
-		Multivar_Hawkes(std::map<int,double>);
-		double operator()(const column_vector) const; //parametrs to be placed in a single vector with proper ordering maintained 	
+		Multivar_Hawkes(std::vector<std::tuple<int,double> >, int);
+		double operator()(const column_vector) const; //parametrs to be placed in a single vector with proper ordering maintained 
+	
 };
 
 #endif
