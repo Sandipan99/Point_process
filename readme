@@ -4,4 +4,7 @@ Multivariate hawkes process uses Armadillo library (http://arma.sourceforge.net/
 
 Likewise likelihood estimation part requires dlib library (http://dlib.net/)
 
+For univariate Hawkes: 
+I have had success fitting mu and alpha by maximizing the MLE with LBFGS. The log-likelihood is not concave in beta though, so you can simply iterate over a range of beta values and pick the one with the maximum likelihood. Note that alpha<beta is required for stationarity of the process.
+
 

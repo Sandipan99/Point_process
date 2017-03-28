@@ -16,9 +16,11 @@ void PoissonProcess(std::vector<double> event){
 
 
 void UnivarHawkesProcess(std::vector<double> event){
-	column_vector starting_point(3);
-	starting_point = 0.5,0.7,1.0;
+	column_vector starting_point(2);
+	starting_point = 1.0,0.4;
 	Univar_Hawkes f(event);
+	//std::cout<< starting_point << std::endl;
+	//std::cout<< f(starting_point) << std::endl;
 	find_min_using_approximate_derivatives(bfgs_search_strategy(),objective_delta_stop_strategy(),f,starting_point,-1);
 	std::cout<< "solution: " << starting_point << std::endl;	
 }
@@ -27,7 +29,7 @@ int main(int argc, char* argv[]){
 	double a;
 	std::vector<double> event;
 	std::ifstream in;
-	in.open("event_sequence_poisson");
+	in.open("event_sequence_hawkes_univ1");
 	while(in >> a){
 		event.push_back(a);
 	}

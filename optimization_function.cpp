@@ -1,5 +1,6 @@
 #include "optimization_function.h"
 #include<cmath>
+#include<iostream>
 
 Poisson_process::Poisson_process(const std::vector<double> input){
 	i_a_t.push_back(input[0]);
@@ -17,9 +18,9 @@ double Poisson_process::operator()(const column_vector x)const{
 }
 
 Univar_Hawkes::Univar_Hawkes(const std::vector<double> input){
-	for(int i=0;i<n;i++)
-		arrival.push_back(input[i]);
 	n = (int)input.size();
+	for(int i=0;i<n;i++)
+		arrival.push_back(input[i]);	
 	t_n = input[n-1];
 	
 }
@@ -28,18 +29,21 @@ double Univar_Hawkes::operator()(const column_vector x)const{
 	double s_1 = 0.0, s_2 = 0.0, s_t, u;
 	double R[n];
 	for(int i=0;i<(int)arrival.size();i++){
-		s_1 += exp((-1)*x(2)*(t_n - arrival[i])) - 1;
+		s_1 += exp((-1)*0.8*(t_n - arrival[i])) - 1;
 	}
-	s_1 = s_1*x(1)/x(2);
+	s_1 = s_1*x(1)/0.8;
+	
 	R[0] = 0;
 	for(int i=1;i<n;i++){
-		R[i] = exp((-1)*x(2)*(arrival[i]-arrival[i-1]))*(1+R[i-1]);
+		R[i] = exp((-1)*0.8*(arrival[i]-arrival[i-1]))*(1+R[i-1]);
 	}
 		
 	for(int i=0;i<n;i++)
 		s_2 += log(x(0) + x(1)*R[i]);
-	return(x(0)*t_n - s_1 - s_2);
+	std::cout << x(0)*t_n - s_1 - s_2 << std::endl;
+	return(x(0)*t_n - s_1 - s_2);	
 }
+
 
 Multivar_Hawkes::Multivar_Hawkes(std::vector<std::tuple<int,double> >input, int d){
 	int id;

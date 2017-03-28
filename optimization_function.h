@@ -34,6 +34,7 @@ class Univar_Hawkes{
 		 
 };
 
+
 class Multivar_Hawkes{
 	private:
 		std::map<int,double> arrival;
