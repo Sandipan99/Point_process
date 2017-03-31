@@ -41,6 +41,7 @@ class Multivar_Hawkes{
 		double t_n;
 		int n;
 		int dim;
+		column_vector beta_m(1);
 	public:
 		Multivar_Hawkes(std::vector<std::tuple<int,double> >, int);
 		double operator()(const column_vector) const; //parametrs to be placed in a single vector with proper ordering maintained 
