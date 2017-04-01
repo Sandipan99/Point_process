@@ -34,7 +34,7 @@ class Univar_Hawkes{
 		 
 };
 
-
+/*
 class Multivar_Hawkes{
 	private:
 		std::map<int,double> arrival;
@@ -46,5 +46,5 @@ class Multivar_Hawkes{
 		double operator()(const column_vector) const; //parametrs to be placed in a single vector with proper ordering maintained 
 	
 };
-
+*/
 #endif

@@ -29,22 +29,22 @@ double Univar_Hawkes::operator()(const column_vector x)const{
 	double s_1 = 0.0, s_2 = 0.0, s_t, u;
 	double R[n];
 	for(int i=0;i<(int)arrival.size();i++){
-		s_1 += exp((-1)*0.8*(t_n - arrival[i])) - 1;
+		s_1 += exp((-1)*0.7*(t_n - arrival[i])) - 1;
 	}
-	s_1 = s_1*x(1)/0.8;
+	s_1 = s_1*x(1)/0.7;
 	
 	R[0] = 0;
 	for(int i=1;i<n;i++){
-		R[i] = exp((-1)*0.8*(arrival[i]-arrival[i-1]))*(1+R[i-1]);
+		R[i] = exp((-1)*0.7*(arrival[i]-arrival[i-1]))*(1+R[i-1]);
 	}
 		
 	for(int i=0;i<n;i++)
 		s_2 += log(x(0) + x(1)*R[i]);
-	std::cout << x(0)*t_n - s_1 - s_2 << std::endl;
+	//std::cout << x(0)*t_n + s_1 - s_2 << std::endl;
 	return(x(0)*t_n - s_1 - s_2);	
 }
 
-
+/*
 Multivar_Hawkes::Multivar_Hawkes(std::vector<std::tuple<int,double> >input, int d){
 	int id;
 	double val;	
@@ -118,4 +118,4 @@ double Multivar_Hawkes::operator()(column_vector x)const{
 	}
 	return fin_res;	
 }
-
+*/

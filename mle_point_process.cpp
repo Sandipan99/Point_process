@@ -17,7 +17,7 @@ void PoissonProcess(std::vector<double> event){
 
 void UnivarHawkesProcess(std::vector<double> event){
 	column_vector starting_point(2);
-	starting_point = 1.0,0.4;
+	starting_point = 0.8,0.3;
 	Univar_Hawkes f(event);
 	//std::cout<< starting_point << std::endl;
 	//std::cout<< f(starting_point) << std::endl;
