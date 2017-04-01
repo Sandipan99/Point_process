@@ -50,6 +50,7 @@ Multivar_Hawkes::Multivar_Hawkes(std::vector<std::tuple<int,double> >input, int 
 	double val;	
 	n = (int)input.size();
 	dim = d;
+	beta_m.set_size(d*d);
 	for(int i=0;i<n;i++){
 		id = std::get<0>(input[i]);
 		val = std::get<1>(input[i]);
@@ -62,12 +63,12 @@ double Multivar_Hawkes::operator()(column_vector x)const{
 	double fin_res = 0.0;
 	int k;	
 	for(int i=0;i<dim;i++){    // calculating likelihood for each dimension. final likelihood will be sum of all
-		double t_1 = 0.0,s_1 = 0.0,s_2 = 0.0,s_t,s_3=0.0,alpha,beta,t,t_a,t_b;
+		double t_1 = 0.0,s_1 = 0.0,s_2 = 0.0,s_t,s_3=0.0,alpha,t,t_a,t_b;
 		int m;
 		t_1 = x(i)*t_n;    // first term in the expression....
 		for(int j=0;j<dim;j++){
 			alpha = x(dim+dim*i+j);
-			beta = x(3*dim+dim*i+j);
+			beta = beta_m(dim*i+j);
 			s_3 = alpha/beta;
 			s_t = 0.0;
 			for(k=0;k<n;k++){
@@ -92,7 +93,8 @@ double Multivar_Hawkes::operator()(column_vector x)const{
 		double s_12,s_21;
 		for(int a=0;a<dim;a++){
 			R[a][0] = 0.0;
-			beta = x(3*dim+a);
+			//beta = x(3*dim+a);
+			beta = beta_m(a);
 			for(int b=1;b<k;b++){
 				t_a = arrival_p[b-1];
 				t_b = arrival_p[b];
