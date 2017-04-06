@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-fs = open("event_sequence_hawkes_univ")
+fs = open("event_sequence_hawkes_univ1")
 
 x_axis = []
 y_axis = []

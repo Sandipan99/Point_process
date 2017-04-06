@@ -27,9 +27,10 @@ class Univar_Hawkes{
 		std::vector<double> arrival;
 		double t_n;
 		int n;
+		double beta;
 
 	public:
-		Univar_Hawkes(std::vector<double>);
+		Univar_Hawkes(std::vector<double>,double);
 		double operator()(const column_vector) const;
 		 
 };
