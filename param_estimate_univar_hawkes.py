@@ -61,14 +61,13 @@ def t_3(x1,x2,x3):
 	return s
 
 if __name__=="__main__":
-	global event
 	fs = open("event_sequence_hawkes_univ1")
 	for line in fs:
 		event.append(float(line.strip()))
 	fs.close()
 	x = [0.5,0.3,0.7]
 	fun = lambda x: t_1(x[0]) - t_2(x[1],x[2]) - t_3(x[0],x[1],x[2])
-	sol = opt.minimize(fun,x,method='Nelder-Mead')
+	soln = opt.minimize(fun,x,method='Nelder-Mead')
 	print soln.x
 
 
