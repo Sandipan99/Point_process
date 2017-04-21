@@ -12,7 +12,7 @@
 #include<string>
 
 
-void UniVariateHawkes(float mu, float alpha, float beta, int T, int iterate){
+void UniVariateHawkes(float mu, float alpha, float beta, int T){
 	std::vector<float> tau;
 	std::vector<float> lambda_t;
 	std::vector<float> t_s;
@@ -21,7 +21,7 @@ void UniVariateHawkes(float mu, float alpha, float beta, int T, int iterate){
 	int i,n=0;
 	std::srand(time(0));
 	lambda_b = mu;
-	while(s<T){
+	while(n<T){
 		lambda_b = mu;
 		if(tau.size()>0){
 			for(it=tau.begin();it!=tau.end();it++)	
@@ -37,15 +37,15 @@ void UniVariateHawkes(float mu, float alpha, float beta, int T, int iterate){
 
 		if(D*lambda_b<=lambda_s){
 			n+=1;			
-			if(s<T){
-				lambda_t.push_back(lambda_s);
-				tau.push_back(s);
-			}
+			//if(s<T){
+			lambda_t.push_back(lambda_s);
+			tau.push_back(s);
+			//}
 		}
 	}
 
 	std::ofstream out;
-	out.open("event_sequence_hawkes_univ"+std::to_string(iterate));
+	out.open("event_sequence_hawkes_univ");
 	for(it=tau.begin();it!=tau.end();it++){
 		out<<*it<<std::endl;
 	}
@@ -55,13 +55,14 @@ void UniVariateHawkes(float mu, float alpha, float beta, int T, int iterate){
 
 int main(int argc, char* argv[]){
 	
-	int T = atoi(argv[1]);
+	//int T = atoi(argv[1]);
+	int events = atoi(argv[1]); //number of events to generate
 	float mu = atof(argv[2]);
 	float alpha = atof(argv[3]);
 	float beta = atof(argv[4]);
 	int iterate = 1;
 	while(iterate>0){
-		UniVariateHawkes(mu, alpha, beta, T, iterate);
+		UniVariateHawkes(mu, alpha, beta, events);
 		iterate--;
 	}
 		
