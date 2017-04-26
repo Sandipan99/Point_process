@@ -12,16 +12,16 @@
 #include<string>
 
 
-void UniVariateHawkes(float mu, float alpha, float beta, int T){
+void UniVariateHawkes(float mu, float alpha, float beta, int T, int type){
 	std::vector<float> tau;
 	std::vector<float> lambda_t;
 	std::vector<float> t_s;
 	std::vector<float>::iterator it;
 	float lambda_s,lambda_b,u,w,D,s=0.0;
 	int i,n=0;
-	std::srand(time(0));
+	std::srand(time(NULL));
 	lambda_b = mu;
-	while(n<T){
+	while(true){
 		lambda_b = mu;
 		if(tau.size()>0){
 			for(it=tau.begin();it!=tau.end();it++)	
@@ -36,11 +36,22 @@ void UniVariateHawkes(float mu, float alpha, float beta, int T){
 			lambda_s+= alpha*exp((-1)*beta*(s-*it));
 
 		if(D*lambda_b<=lambda_s){
-			n+=1;			
-			//if(s<T){
-			lambda_t.push_back(lambda_s);
-			tau.push_back(s);
-			//}
+			n+=1;
+			if(type==1){			
+				if(s<T){
+					lambda_t.push_back(lambda_s);
+					tau.push_back(s);
+				}
+				else	break;
+			}
+			else{
+				if(n<=T){
+					lambda_t.push_back(lambda_s);
+					tau.push_back(s);
+				}
+				else	break;
+				
+			}
 		}
 	}
 
@@ -56,14 +67,12 @@ void UniVariateHawkes(float mu, float alpha, float beta, int T){
 int main(int argc, char* argv[]){
 	
 	//int T = atoi(argv[1]);
-	int events = atoi(argv[1]); //number of events to generate
+	int events = atoi(argv[1]); //number of events to generate or end time
 	float mu = atof(argv[2]);
 	float alpha = atof(argv[3]);
 	float beta = atof(argv[4]);
-	int iterate = 1;
-	while(iterate>0){
-		UniVariateHawkes(mu, alpha, beta, events);
-		iterate--;
-	}
+	int type = atoi(argv[5]); // determines the type of the simulation 1. simulation with specified end time 2. simulation with specified number of events
+
+	UniVariateHawkes(mu, alpha, beta, events,type);
 		
 }

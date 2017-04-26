@@ -2,8 +2,12 @@ import scipy.optimize as opt
 import math
 import random as re
 import os
+import numpy as np
 import matplotlib.pyplot as plt
+import sys
+import time
 
+__author__ = "Sandipan Sikdar"
 
 def t_1(x1,event):
 	return event[-1]*x1
@@ -31,29 +35,34 @@ def plot_event(x):
 	y = [1 for i in xrange(len(x))]
 	return x,y
 
-def compare(event_or,l_p,s):
+def compare(event_or,l_p,s,v,fname):
 	event_gen = []
-	fs = open("event_sequence_hawkes_univ")
+	fs = open(fname)
 	for line in fs:
 		event_gen.append(l_p+float(line.strip()))
-	event_real = event_or[s:s+50]
-	#print event_or[:s+50]
-	#print len(event_gen),len(event_real)
-	#plt.xlim([l_p-1,l_p+30])
-	plt.ylim([0,2])
-	#plt.xscale('log')
+	fs.close()
+	if v==1:
+		event_real = event_or[:s]
+	else:
+		event_real = event_or[s:]
+	#print len(event_real),len(event_gen)
+	'''
+	plt.ylim([0,2])	
 	x,y = plot_event(event_gen)
-	plt.stem(x,y,'b',markerfmt='bo',label='synt')
+	plt.stem(x,y,'b',markerfmt='bo',label="synt")
 	x,y = plot_event(event_real)
-	plt.stem(x,y,'r',markerfmt='ro',label='real')
+	plt.stem(x,y,'r',markerfmt='ro',label="real")
+	plt.legend(bbox_to_anchor=(1.05, 1), loc=1, borderaxespad=0.)
 	plt.show()
+	'''
+	return MAE(event_real,event_gen)
 	
 def obtain_node_arrivals(fname):
 	node_arr = {}
 	node = []
 	fs = open(fname)
 	for line in fs:
-		t,u,v = map(int,line.strip().split("\t"))
+		u,v,t = map(int,line.strip().split(" "))
 		if u not in node_arr:
 			node_arr[u] = []
 			node_arr[u].append(t)
@@ -74,16 +83,14 @@ def obtain_node_arrivals(fname):
 
 	return node_arr,node
 
-def select_node_arrivals(node_arr,node):
+def select_node_arrivals(node_arr,node,n):
 	event = [0.0]
 	event_or = [0.0]
-	u = node[1]
+	u = node[n]
 	t = int(len(node_arr[u])*0.8)
-	#for i in xrange(t):
-	#	event.append(node_arr[u][i])
 	i_a_t = []
 	for i in xrange(1,len(node_arr[u])):
-		a = float(node_arr[u][i] - node_arr[u][i-1])/3600
+		a = float(node_arr[u][i] - node_arr[u][i-1])/(3600*24)
 		i_a_t.append(a)
 
 	for i in xrange(1,len(node_arr[u])):
@@ -107,7 +114,7 @@ def read_arrivals(fname):
 
 	i_a_t = []
 	for i in xrange(1,len(intm)):
-		a = float(intm[i] - intm[i-1])/3600
+		a = float(intm[i] - intm[i-1])/(3600*24)
 		i_a_t.append(a)
 
 	for i in xrange(1,len(intm)):
@@ -117,31 +124,123 @@ def read_arrivals(fname):
 			event.append(a)
 	return event,event_or
 
+def RMSE(event_synt,event_or):   #calculates root mean squared error
+	i_a_t_synt = []
+	i_a_t_or = []
+
+	for i in xrange(1,len(event_synt)):
+		i_a_t_synt.append(event_synt[i] - event_synt[i-1])
+		i_a_t_or.append(event_or[i] - event_or[i-1])	
+
+	s = 0.0
+	for i in xrange(len(i_a_t_synt)-1):
+		s += (i_a_t_synt[i] - i_a_t_or[i])**2
+	s = s/len(i_a_t_synt)
+	return math.sqrt(s)
+
+def MAE(event_synt,event_or):  #calculates mean absolute error
+	i_a_t_synt = []
+	i_a_t_or = []
+
+	for i in xrange(1,len(event_synt)):
+		i_a_t_synt.append(event_synt[i] - event_synt[i-1])
+		i_a_t_or.append(event_or[i] - event_or[i-1])	
+
+	s = 0.0
+	for i in xrange(len(i_a_t_synt)-1):
+		s += math.fabs(i_a_t_synt[i] - i_a_t_or[i])
+	s = s/len(i_a_t_synt)
+	return s
+
+def minimum(a,b):
+	if a>b:
+		return b
+	else:
+		return a
+
+def PRMSE(event_synt,event_or):
+	k = minimum(len(event_synt),len(event_or))
+	s = 0.0
+	for i in xrange(k):
+		s += (event_synt[i] - event_or[i])**2
+	T = event_or[-1]
+
+	if len(event_synt)>k:
+		for i in xrange(k,len(event_synt)):
+			s += (T - event_synt[i])**2
+	else:
+		for i in xrange(k,len(event_or)):
+			s += (T - event_or[i])**2
+
+	return math.sqrt(s)
+
+def estimate_univar_hawkes(ver):
+
+	node_arr,node = obtain_node_arrivals("email-Eu-core.txt")  # this routine is to be used when the input is a time stamped edge list
+
+	rmse_all = []
+
+	for i in xrange(len(node)):
+
+		print "considering node",node[i]	
+		
+		event,event_or = select_node_arrivals(node_arr,node,i) # to be used in conjunction with obtain_node_arrivals
+
+		if len(event_or)<100:
+			print "not enough events to learn parameter"
+			continue
+
+		iterations = 10
+
+		rmse_sim = []
+
+		x = [0.5,0.3,0.5]
+		bnds = ((0.001,None),(0.001,None),(0.001,None))
+		event.sort()	
+		fun = lambda x: t_1(x[0],event) - t_2(x[1],x[2],event) - t_3(x[0],x[1],x[2],event)
+		soln = opt.minimize(fun,x,method='L-BFGS-B',bounds=bnds)
+		print "solution", soln.x[0], soln.x[1], soln.x[2]
+
+		while iterations>0:
+		
+			if ver==1:  # simulations matching the training set...................
+
+				time.sleep(1)
+			
+				os.system("./univar_hawkes "+str(len(event))+" "+str(soln.x[0])+" "+str(soln.x[1])+" "+str(soln.x[2])+" 0")
+
+				#print "generated events..."
+			
+				rmse = compare(event_or,0,len(event),1,"event_sequence_hawkes_univ") # compares on the training data
+
+			else:      # simulations matching the test set.........................
+
+				p_t_g = len(event_or) - len(event)  # number of points to generate
+		
+				l_p = event[-1]	 # time of the last event from which to generate
+
+				time.sleep(1)
+				
+				os.system("./univar_hawkes "+str(p_t_g)+" "+str(soln.x[0])+" "+str(soln.x[1])+" "+str(soln.x[2])+" 0")
+
+				#print "generated events..."
+			
+				rmse = compare(event_or,l_p,len(event),0,"event_sequence_hawkes_univ") # compares on the training data
+
+			rmse_sim.append(rmse)
+			iterations-=1
+
+		rmse_all.append(np.mean(rmse_sim))
+		print "--------------------"
+
+	return rmse_all
+
+
 if __name__=="__main__":
 	
-	#node_arr,node = obtain_node_arrivals("combined_data_mathoverflow")  # this routine is to be used when the input is a time stamped edge list	
+	ver = int(sys.argv[1])
+
+	rmse_all = estimate_univar_hawkes(ver)
+
+	print np.mean(rmse_all),np.std(rmse_all)
 		
-	#event,event_or = select_node_arrivals(node_arr,node) # to be used in conjunction with obtain_node_arrivals
-
-	event,event_or = read_arrivals("node_arrivals")	# to be used if the input is arrival times only
-
-	#print event
-	#print event_or
-	#p_t_g = len(event_or) - len(event)  # number of points to generate
-	p_t_g = 50
-	l_p = event[-1]	 # time of the last event from which to generate
-	
-	print p_t_g,l_p
-
-	x = [0.5,0.3,0.5]
-	bnds = ((0.001,None),(0.001,None),(0.001,None))
-	event.sort()	
-	fun = lambda x: t_1(x[0],event) - t_2(x[1],x[2],event) - t_3(x[0],x[1],x[2],event)
-	soln = opt.minimize(fun,x,method='L-BFGS-B',bounds=bnds)
-	print soln.x[0], soln.x[1], soln.x[2]
-	
-	os.system("./univar_hawkes "+str(p_t_g)+" "+str(soln.x[0])+" "+str(soln.x[1])+" "+str(soln.x[2]))
-
-	print "generated events..."
-	
-	compare(event_or,l_p,len(event))			
