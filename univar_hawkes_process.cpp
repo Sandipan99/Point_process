@@ -1,8 +1,4 @@
-//implements univariate hawkes process follwing ogata's algorithm
-
-//input: intensity distribution parameter (u_p), end time (t)
-//output: sequence of events 
-
+ 
 #include<stdlib.h>
 #include<time.h>
 #include<iostream>
@@ -10,6 +6,15 @@
 #include<math.h>
 #include<fstream>
 #include<string>
+
+/**
+
+implements univariate hawkes process follwing ogata's algorithm
+input: intensity distribution parameter (u_p), end time (t)
+output: sequence of events
+@author Sandipan Sikdar
+
+**/
 
 
 void UniVariateHawkes(float mu, float alpha, float beta, int T, int type){

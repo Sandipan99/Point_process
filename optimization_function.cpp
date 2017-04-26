@@ -2,6 +2,11 @@
 #include<cmath>
 #include<iostream>
 
+/**
+
+@author Sandipan Sikdar
+
+**/
 Poisson_process::Poisson_process(const std::vector<double> input){
 	i_a_t.push_back(input[0]);
 	sum+=input[0];

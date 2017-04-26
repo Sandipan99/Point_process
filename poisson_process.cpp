@@ -1,6 +1,3 @@
-//simulates poisson process.....
-//input: end time (t), intensity (lambda)
-//output: sequence of times of the occurrence of events
 
 #include<iostream>
 #include<stdlib.h>
@@ -8,6 +5,15 @@
 #include<vector>
 #include<fstream>
 #include<time.h>
+
+/**
+
+@author Sandipan Sikdar
+simulates poisson process.....
+input: end time (t), intensity (lambda)
+output: sequence of times of the occurrence of events
+
+**/
 
 int main(int argc, char* argv[]){
 	std::vector<float> e;

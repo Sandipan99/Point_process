@@ -1,5 +1,3 @@
-//implements multivariate hawkes process using ogata's modified thinning algorithm
-//input dimension,T,mu,alpha,beta
 
 #include<iostream>
 #include<stdio.h>
@@ -10,6 +8,12 @@
 #include<time.h>
 #include<map>
 #include<string>
+
+/**implements multivariate hawkes process using ogata's modified thinning algorithm
+input dimension,T,mu,alpha,beta
+@author Sandipan Sikdar
+**/
+
 
 
 int present(std::map<int,std::vector<float> > m, int e){

@@ -1,3 +1,4 @@
+
 #include<iostream>
 #include<vector>
 #include<cmath>
@@ -5,6 +6,13 @@
 #include "optimization_function.h"
 #include<fstream>
 #include<string>
+
+/**
+
+@author Sandipan Sikdar
+
+**/
+
 
 bool present(std::vector<int> m,int i){
 	std::vector<int>::iterator it;
