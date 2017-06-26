@@ -8,7 +8,7 @@ __author__ = "Sandipan Sikdar"
 
 def estimate_poisson(ver):
 
-	node_arr,node = obtain_node_arrivals("email-Eu-core.txt")  # this routine is to be used when the input is a time stamped edge list
+	node_arr,node = obtain_node_arrivals("CollegeMsg.txt")  # this routine is to be used when the input is a time stamped edge list
 
 	rmse_all = []
 
@@ -39,11 +39,11 @@ def estimate_poisson(ver):
 
 			rmse = compare(event_or,l_p,len(event),0,"event_sequence_poisson")
 			rmse_sim.append(rmse)
-			print iterations,rmse
+			#print iterations,rmse
 			iterations-=1
-
+		print np.mean(rmse_sim)
 		rmse_all.append(np.mean(rmse_sim))
-		break
+		
 	return rmse_all
 
 

@@ -1,6 +1,7 @@
 import scipy.optimize as opt
 import math
-import random as re
+import random as rand
+import re
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -62,7 +63,9 @@ def obtain_node_arrivals(fname):
 	node = []
 	fs = open(fname)
 	for line in fs:
-		u,v,t = map(int,line.strip().split(" "))
+		if re.match("%.*",line):
+			continue
+		u,v,w,t = map(int,line.strip().split(" "))
 		if u not in node_arr:
 			node_arr[u] = []
 			node_arr[u].append(t)
@@ -83,14 +86,21 @@ def obtain_node_arrivals(fname):
 
 	return node_arr,node
 
-def select_node_arrivals(node_arr,node,n):
+def find_time_span(node_arr):
+	time = []
+	for n in node_arr:
+		time.append(node_arr[n][-1])
+	return max(time)	
+
+
+def select_node_arrivals(node_arr,node,n,time):
 	event = [0.0]
 	event_or = [0.0]
 	u = node[n]
 	t = int(len(node_arr[u])*0.8)
 	i_a_t = []
 	for i in xrange(1,len(node_arr[u])):
-		a = float(node_arr[u][i] - node_arr[u][i-1])/(3600*24)
+		a = float(node_arr[u][i] - node_arr[u][i-1])/(3600)
 		i_a_t.append(a)
 
 	for i in xrange(1,len(node_arr[u])):
@@ -114,7 +124,7 @@ def read_arrivals(fname):
 
 	i_a_t = []
 	for i in xrange(1,len(intm)):
-		a = float(intm[i] - intm[i-1])/(3600*24)
+		a = float(intm[i] - intm[i-1])/(3600)
 		i_a_t.append(a)
 
 	for i in xrange(1,len(intm)):
@@ -176,9 +186,11 @@ def PRMSE(event_synt,event_or):
 
 def estimate_univar_hawkes(ver):
 
-	node_arr,node = obtain_node_arrivals("email-Eu-core.txt")  # this routine is to be used when the input is a time stamped edge list
+	node_arr,node = obtain_node_arrivals("Haggle/contact/out.contact_use")  # this routine is to be used when the input is a time stamped edge list
 
 	rmse_all = []
+
+	time = find_time_span(node_arr)
 
 	for i in xrange(len(node)):
 
@@ -201,13 +213,19 @@ def estimate_univar_hawkes(ver):
 		soln = opt.minimize(fun,x,method='L-BFGS-B',bounds=bnds)
 		print "solution", soln.x[0], soln.x[1], soln.x[2]
 
+		fs = open("intm","w")
+		for obj in event:
+			fs.write(str(obj))
+			fs.write("\n")
+		fs.close()
+
 		while iterations>0:
 		
 			if ver==1:  # simulations matching the training set...................
 
 				time.sleep(1)
 			
-				os.system("./univar_hawkes "+str(len(event))+" "+str(soln.x[0])+" "+str(soln.x[1])+" "+str(soln.x[2])+" 0")
+				os.system("./univar_hawkes "+str(len(event))+" "+str(soln.x[0])+" "+str(soln.x[1])+" "+str(soln.x[2])+" 0 intm")
 
 				#print "generated events..."
 			
@@ -221,7 +239,7 @@ def estimate_univar_hawkes(ver):
 
 				time.sleep(1)
 				
-				os.system("./univar_hawkes "+str(p_t_g)+" "+str(soln.x[0])+" "+str(soln.x[1])+" "+str(soln.x[2])+" 0")
+				os.system("./univar_hawkes "+str(p_t_g)+" "+str(soln.x[0])+" "+str(soln.x[1])+" "+str(soln.x[2])+" 0 intm")
 
 				#print "generated events..."
 			
@@ -230,6 +248,7 @@ def estimate_univar_hawkes(ver):
 			rmse_sim.append(rmse)
 			iterations-=1
 
+		print np.mean(rmse_sim)
 		rmse_all.append(np.mean(rmse_sim))
 		print "--------------------"
 

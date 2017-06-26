@@ -9,3 +9,4 @@ I have had success fitting mu and alpha by maximizing the MLE with LBFGS. The lo
 
 param_estimate_univar_hawkes.py uses Nelder-Mead algorithm to obtain a better estimation for univariate case. It simultaneously estimates mu, alpha nad beta.
 
+(i) running poisson process: create object file and then execute as "./poisson <time/no> <lambda> <type>"
