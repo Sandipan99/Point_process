@@ -93,7 +93,7 @@ def find_time_span(node_arr):
 	return max(time)	
 
 
-def select_node_arrivals(node_arr,node,n,time):
+def select_node_arrivals(node_arr,node,n):
 	event = [0.0]
 	event_or = [0.0]
 	u = node[n]
@@ -190,7 +190,7 @@ def estimate_univar_hawkes(ver):
 
 	rmse_all = []
 
-	time = find_time_span(node_arr)
+	time_ = find_time_span(node_arr)
 
 	for i in xrange(len(node)):
 
