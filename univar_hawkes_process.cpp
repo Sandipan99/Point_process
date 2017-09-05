@@ -1,5 +1,6 @@
  
 #include<stdlib.h>
+#include<cstdlib>
 #include<time.h>
 #include<iostream>
 #include<vector>
@@ -17,8 +18,8 @@ output: sequence of events
 **/
 
 
-void UniVariateHawkes(float mu, float alpha, float beta, int T, int type, std::vector<float> &tau){
-	//std::vector<float> tau;
+void UniVariateHawkes(float mu, float alpha, float beta, int T, int type){
+	std::vector<float> tau;
 	std::vector<float> lambda_t;
 	std::vector<float> t_s;
 	std::vector<float>::iterator it;
@@ -42,6 +43,7 @@ void UniVariateHawkes(float mu, float alpha, float beta, int T, int type, std::v
 
 		if(D*lambda_b<=lambda_s){
 			n+=1;
+			std::cout<<s<<std::endl;
 			if(type==1){			
 				if(s<T){  // generates events upto a given time
 					lambda_t.push_back(lambda_s);
@@ -79,13 +81,13 @@ int main(int argc, char* argv[]){
 	float beta = atof(argv[4]);
 	int type = atoi(argv[5]); // determines the type of the simulation 1. simulation with specified end time 2. simulation with specified number of events
 	std::vector<float> tau;
-
+	/*
 	std::ifstream in;
 	in.open(argv[6]);
 	while(in>>t)
 		tau.push_back(t);
 	in.close();
-	std::cout<<tau.size()<<std::endl;
-	UniVariateHawkes(mu, alpha, beta, events,type,tau);
+	std::cout<<tau.size()<<std::endl;*/
+	UniVariateHawkes(mu, alpha, beta, events,type);
 		
 }

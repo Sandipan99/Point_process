@@ -65,7 +65,7 @@ def obtain_node_arrivals(fname):
 	for line in fs:
 		if re.match("%.*",line):
 			continue
-		u,v,w,t = map(int,line.strip().split(" "))
+		t,u,v = map(int,line.strip().split("\t"))
 		if u not in node_arr:
 			node_arr[u] = []
 			node_arr[u].append(t)
@@ -186,7 +186,7 @@ def PRMSE(event_synt,event_or):
 
 def estimate_univar_hawkes(ver):
 
-	node_arr,node = obtain_node_arrivals("Haggle/contact/out.contact_use")  # this routine is to be used when the input is a time stamped edge list
+	node_arr,node = obtain_node_arrivals("infocom2006")  # this routine is to be used when the input is a time stamped edge list
 
 	rmse_all = []
 
@@ -239,7 +239,7 @@ def estimate_univar_hawkes(ver):
 
 				time.sleep(1)
 				
-				os.system("./univar_hawkes "+str(p_t_g)+" "+str(soln.x[0])+" "+str(soln.x[1])+" "+str(soln.x[2])+" 0 intm")
+				os.system("./univar_hawkes "+str(p_t_g)+" "+str(soln.x[0])+" "+str(soln.x[1])+" "+str(soln.x[2])+" 0")
 
 				#print "generated events..."
 			
@@ -251,7 +251,7 @@ def estimate_univar_hawkes(ver):
 		print np.mean(rmse_sim)
 		rmse_all.append(np.mean(rmse_sim))
 		print "--------------------"
-
+		break
 	return rmse_all
 
 
